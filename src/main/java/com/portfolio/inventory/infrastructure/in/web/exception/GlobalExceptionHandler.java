@@ -66,6 +66,8 @@ public class GlobalExceptionHandler {
   // 4. Manejo global para cualquier otro error (Error 500)
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorMessage> handleGlobalException(Exception ex, WebRequest request) {
+    ex.printStackTrace();
+
     ErrorMessage message = new ErrorMessage(
       LocalDateTime.now(),
       HttpStatus.INTERNAL_SERVER_ERROR.value(),
