@@ -40,8 +40,13 @@ public class StockEntryJpaAdapter implements StockEntryRepository {
       .entryDate(entry.getEntryDate())
       .build();
 
+    // 1. Guardamos en la base de datos
     StockEntryEntity savedEntity = repository.save(entity);
-    return toDomain(savedEntity);
+
+    // 2. ¡EL TRUCO! En lugar de llamar a toDomain(savedEntity) que lanza el error de Proxy,
+    // simplemente le ponemos el nuevo ID de la BD a nuestro objeto original y lo devolvemos intacto.
+    entry.setId(savedEntity.getId());
+    return entry;
   }
 
   @Override
