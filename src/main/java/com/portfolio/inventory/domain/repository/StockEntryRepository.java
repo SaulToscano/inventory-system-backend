@@ -14,4 +14,5 @@ public interface StockEntryRepository {
   // Útiles para el frontend más adelante
   Page<StockEntry> findByProductId(Long productId, Pageable pageable);
   Page<StockEntry> findBySupplierId(Long supplierId, Pageable pageable);
+  Page<StockEntry> searchAndFilterStockEntries(String search, Long productId, Long supplierId, Pageable pageable);
 }

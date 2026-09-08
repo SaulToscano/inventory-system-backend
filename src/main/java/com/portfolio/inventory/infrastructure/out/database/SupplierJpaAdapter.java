@@ -49,6 +49,11 @@ public class SupplierJpaAdapter implements SupplierRepository {
     return repository.existsByName(name);
   }
 
+  @Override
+  public Page<Supplier> searchSuppliers(String search, Pageable pageable) {
+    return repository.searchSuppliers(search, pageable).map(this::toDomain);
+  }
+
   private Supplier toDomain(SupplierEntity entity) {
     return Supplier.builder()
       .id(entity.getId())

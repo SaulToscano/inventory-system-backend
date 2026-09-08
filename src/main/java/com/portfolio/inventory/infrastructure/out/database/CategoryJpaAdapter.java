@@ -46,6 +46,11 @@ public class CategoryJpaAdapter implements CategoryRepository {
     return repository.existsByName(name);
   }
 
+  @Override
+  public Page<Category> searchCategories(String search, Pageable pageable) {
+    return repository.searchCategories(search, pageable).map(this::toDomain);
+  }
+
   // Método auxiliar para mapear de Entidad a Dominio
   private Category toDomain(CategoryEntity entity) {
     return Category.builder()

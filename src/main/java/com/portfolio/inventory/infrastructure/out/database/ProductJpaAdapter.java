@@ -61,6 +61,12 @@ public class ProductJpaAdapter implements ProductRepository {
     return repository.findByCategoryId(categoryId, pageable).map(this::toDomain);
   }
 
+  @Override
+  public Page<Product> searchAndFilterProducts(String search, Long categoryId, Pageable pageable) {
+    // Llamamos a tu repositorio de Spring Data y mapeamos la respuesta usando tu propio método toDomain
+    return repository.searchAndFilterProducts(search, categoryId, pageable).map(this::toDomain);
+  }
+
   // Método auxiliar para transformar Entidades JPA en Objetos de Dominio puros
   private Product toDomain(ProductEntity entity) {
     Category category = Category.builder()

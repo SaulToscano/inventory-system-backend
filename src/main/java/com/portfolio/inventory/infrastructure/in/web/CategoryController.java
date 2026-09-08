@@ -32,10 +32,12 @@ public class CategoryController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener todas las categorías paginadas")
+  @Operation(summary = "Obtener todas las categorías paginadas y filtradas")
   public ResponseEntity<Page<Category>> getAll(
-    @PageableDefault(size = 10, page = 0) Pageable pageable) {
-    return ResponseEntity.ok(categoryService.getAllCategories(pageable));
+    @RequestParam(required = false) String search,
+    @PageableDefault(size = 10, page = 0, sort = "id") Pageable pageable) {
+
+    return ResponseEntity.ok(categoryService.getCategories(search, pageable));
   }
 
   @GetMapping("/{id}")

@@ -12,4 +12,5 @@ public interface SupplierRepository {
   Page<Supplier> findAll(Pageable pageable);
   void deleteById(Long id);
   boolean existsByName(String name);
+  Page<Supplier> searchSuppliers(String search, Pageable pageable);
 }

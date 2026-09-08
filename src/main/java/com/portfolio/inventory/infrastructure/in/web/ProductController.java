@@ -33,11 +33,25 @@ public class ProductController {
     return new ResponseEntity<>(productService.createProduct(product, request.categoryId()), HttpStatus.CREATED);
   }
 
+  @PutMapping("/{id}")
+  @Operation(summary = "Actualizar un producto")
+  public ResponseEntity<Product> update(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
+    Product product = Product.builder()
+      .name(request.name())
+      .details(request.details())
+      .build();
+    // Asegúrate de crear este método en tu ProductService
+    return ResponseEntity.ok(productService.updateProduct(id, product, request.categoryId()));
+  }
+
   @GetMapping
-  @Operation(summary = "Obtener todos los productos paginados")
+  @Operation(summary = "Obtener todos los productos paginados y filtrados")
   public ResponseEntity<Page<Product>> getAll(
+    @RequestParam(required = false) String search,
+    @RequestParam(required = false) Long categoryId,
     @PageableDefault(size = 10, page = 0, sort = "id") Pageable pageable) {
-    return ResponseEntity.ok(productService.getAllProducts(pageable));
+
+    return ResponseEntity.ok(productService.getAllProducts(search, categoryId, pageable));
   }
 
   @GetMapping("/{id}")

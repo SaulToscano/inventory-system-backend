@@ -34,10 +34,11 @@ public class SupplierController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener todos los proveedores paginados")
+  @Operation(summary = "Obtener todos los proveedores paginados y filtrados")
   public ResponseEntity<Page<Supplier>> getAll(
+    @RequestParam(required = false) String search,
     @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
-    return ResponseEntity.ok(supplierService.getAllSuppliers(pageable));
+    return ResponseEntity.ok(supplierService.getAllSuppliers(search, pageable));
   }
 
   @GetMapping("/{id}")

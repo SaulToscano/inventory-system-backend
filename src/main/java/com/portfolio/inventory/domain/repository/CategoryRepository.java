@@ -12,4 +12,5 @@ public interface CategoryRepository {
   Page<Category> findAll(Pageable pageable);
   void deleteById(Long id);
   boolean existsByName(String name);
+  Page<Category> searchCategories(String search, Pageable pageable);
 }

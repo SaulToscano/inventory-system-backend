@@ -45,10 +45,14 @@ public class StockEntryController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener todo el historial de entradas")
+  @Operation(summary = "Obtener todo el historial de entradas filtrado y paginado")
   public ResponseEntity<Page<StockEntry>> getAll(
+    @RequestParam(required = false) String search,
+    @RequestParam(required = false) Long productId,
+    @RequestParam(required = false) Long supplierId,
     @PageableDefault(size = 10, page = 0, sort = "entryDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
-    return ResponseEntity.ok(stockEntryService.getAll(pageable));
+
+    return ResponseEntity.ok(stockEntryService.getAll(search, productId, supplierId, pageable));
   }
 
   @GetMapping("/{id}")

@@ -58,8 +58,9 @@ public class StockEntryService {
     return stockEntryRepository.save(stockEntry);
   }
 
-  public Page<StockEntry> getAll(Pageable pageable) {
-    return stockEntryRepository.findAll(pageable);
+  public Page<StockEntry> getAll(String search, Long productId, Long supplierId, Pageable pageable) {
+    String finalSearch = (search != null && !search.trim().isEmpty()) ? search : "";
+    return stockEntryRepository.searchAndFilterStockEntries(finalSearch, productId, supplierId, pageable);
   }
 
   public StockEntry getById(Long id) {

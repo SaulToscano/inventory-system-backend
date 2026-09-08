@@ -41,4 +41,9 @@ public class CategoryService {
     Category category = getCategoryById(id);
     categoryRepository.deleteById(category.getId());
   }
+
+  public Page<Category> getCategories(String search, Pageable pageable) {
+    String finalSearch = (search != null && !search.trim().isEmpty()) ? search : "";
+    return categoryRepository.searchCategories(finalSearch, pageable);
+  }
 }

@@ -21,8 +21,9 @@ public class SupplierService {
     return supplierRepository.save(supplier);
   }
 
-  public Page<Supplier> getAllSuppliers(Pageable pageable) {
-    return supplierRepository.findAll(pageable);
+  public Page<Supplier> getAllSuppliers(String search, Pageable pageable) {
+    String finalSearch = (search != null && !search.trim().isEmpty()) ? search : "";
+    return supplierRepository.searchSuppliers(finalSearch, pageable);
   }
 
   public Supplier getSupplierById(Long id) {

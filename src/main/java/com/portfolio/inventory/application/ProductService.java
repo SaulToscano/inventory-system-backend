@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
   private final ProductRepository productRepository;
-  private final CategoryRepository categoryRepository; // Lo necesitamos para validar la llave foránea
+  private final CategoryRepository categoryRepository;
 
   public Product createProduct(Product product, Long categoryId) {
     if (productRepository.existsByName(product.getName())) {
@@ -33,8 +33,32 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public Page<Product> getAllProducts(Pageable pageable) {
-    return productRepository.findAll(pageable);
+  // === NUEVO MÉTODO PARA ACTUALIZAR ===
+  public Product updateProduct(Long id, Product updatedProduct, Long categoryId) {
+    // 1. Buscamos el producto existente (reutilizamos tu propio método)
+    Product existingProduct = getProductById(id);
+
+    // 2. Validamos que la nueva categoría exista
+    Category category = categoryRepository.findById(categoryId)
+      .orElseThrow(() -> new ResourceNotFoundException("No se puede actualizar: La categoría con ID " + categoryId + " no existe"));
+
+    // 3. Verificamos si el nombre cambió y si el nuevo nombre ya está ocupado por otro producto
+    if (!existingProduct.getName().equalsIgnoreCase(updatedProduct.getName()) && productRepository.existsByName(updatedProduct.getName())) {
+      throw new IllegalArgumentException("Ya existe otro producto con el nombre: " + updatedProduct.getName());
+    }
+
+    // 4. Actualizamos los campos
+    existingProduct.setName(updatedProduct.getName());
+    existingProduct.setDetails(updatedProduct.getDetails());
+    existingProduct.setCategory(category);
+
+    // 5. Guardamos y retornamos
+    return productRepository.save(existingProduct);
+  }
+
+  public Page<Product> getAllProducts(String search, Long categoryId, Pageable pageable) {
+    String finalSearch = (search != null && !search.trim().isEmpty()) ? search : "";
+    return productRepository.searchAndFilterProducts(finalSearch, categoryId, pageable);
   }
 
   public Product getProductById(Long id) {
@@ -43,7 +67,6 @@ public class ProductService {
   }
 
   public Page<Product> getProductsByCategory(Long categoryId, Pageable pageable) {
-    // Validamos que la categoría exista antes de buscar sus productos
     if (categoryRepository.findById(categoryId).isEmpty()) {
       throw new ResourceNotFoundException("La categoría con ID " + categoryId + " no existe");
     }

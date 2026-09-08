@@ -69,6 +69,12 @@ public class StockEntryJpaAdapter implements StockEntryRepository {
     return repository.findBySupplierId(supplierId, pageable).map(this::toDomain);
   }
 
+  @Override
+  public Page<StockEntry> searchAndFilterStockEntries(String search, Long productId, Long supplierId, Pageable pageable) {
+    return repository.searchAndFilterStockEntries(search, productId, supplierId, pageable)
+      .map(this::toDomain);
+  }
+
   private StockEntry toDomain(StockEntryEntity entity) {
     // Mapeo básico para no saturar la memoria, solo traemos lo esencial
     Product product = Product.builder()

@@ -16,4 +16,6 @@ public interface ProductRepository {
   // Un método extra muy útil para el futuro frontend:
   // "Dame todos los productos de la categoría X"
   Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+
+  Page<Product> searchAndFilterProducts(String search, Long categoryId, Pageable pageable);
 }
