@@ -9,4 +9,5 @@ public interface InvoiceRepository {
   Invoice save(Invoice invoice);
   Optional<Invoice> findById(Long id);
   Page<Invoice> findAll(Pageable pageable);
+  Page<Invoice> searchInvoices(String search, Long customerId, Long productId, Pageable pageable);
 }

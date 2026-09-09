@@ -27,11 +27,14 @@ public class InvoiceController {
   private final InvoicePdfService invoicePdfService;
 
   @GetMapping
-  @Operation(summary = "Obtener el listado general de facturas (Paginado)")
+  @Operation(summary = "Obtener el listado general de facturas (Paginado y filtrado)")
   public ResponseEntity<org.springframework.data.domain.Page<Invoice>> getAll(
+    @RequestParam(required = false) String search,
+    @RequestParam(required = false) Long customerId,
+    @RequestParam(required = false) Long productId,
     @PageableDefault(size = 10, page = 0, sort = "issueDate", direction = org.springframework.data.domain.Sort.Direction.DESC) org.springframework.data.domain.Pageable pageable) {
 
-    return ResponseEntity.ok(invoiceService.getAllInvoices(pageable));
+    return ResponseEntity.ok(invoiceService.getAllInvoices(search, customerId, productId, pageable));
   }
 
   @PostMapping
@@ -60,7 +63,7 @@ public class InvoiceController {
     }
 
     // 3. Llamar al servicio
-    Invoice generatedInvoice = invoiceService.generateInvoice(request.customerId(), items, initialPayment);
+    Invoice generatedInvoice = invoiceService.generateInvoice(request.customerId(), request.issueDate(), items, initialPayment);
 
     return new ResponseEntity<>(generatedInvoice, HttpStatus.CREATED);
   }

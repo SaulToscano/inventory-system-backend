@@ -84,6 +84,13 @@ public class InvoiceJpaAdapter implements InvoiceRepository {
     return invoiceRepository.findAll(pageable).map(this::toDomain);
   }
 
+  @Override
+  public Page<Invoice> searchInvoices(String search, Long customerId, Long productId, Pageable pageable) {
+    // Usamos .map(this::toDomain) para convertir InvoiceEntity a Invoice puro
+    return invoiceRepository.searchInvoices(search, customerId, productId, pageable)
+      .map(this::toDomain);
+  }
+
   // Método auxiliar para transformar Entidades JPA a Objetos de Dominio puros
   private Invoice toDomain(InvoiceEntity entity) {
     // 1. Mapear el cliente (Agregamos el email porque el PDF lo necesita)

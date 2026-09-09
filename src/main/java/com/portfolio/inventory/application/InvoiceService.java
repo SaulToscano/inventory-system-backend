@@ -30,7 +30,7 @@ public class InvoiceService {
    * NADA se guarda en la base de datos, evitando inconsistencias.
    */
   @Transactional
-  public Invoice generateInvoice(Long customerId, List<InvoiceItem> items, Payment initialPayment) {
+  public Invoice generateInvoice(Long customerId, LocalDateTime issueDate, List<InvoiceItem> items, Payment initialPayment) {
 
     // 1. Validar Cliente
     Customer customer = customerRepository.findById(customerId)
@@ -79,7 +79,7 @@ public class InvoiceService {
     // 5. Construir la Factura Base
     Invoice invoice = Invoice.builder()
       .invoiceNumber("FAC-" + System.currentTimeMillis()) // Generador temporal de folio
-      .issueDate(LocalDateTime.now())
+      .issueDate(issueDate)
       .customer(customer)
       .items(items)
       .totalGross(totalGross)
@@ -173,7 +173,10 @@ public class InvoiceService {
     return invoiceRepository.save(invoice);
   }
 
-  public org.springframework.data.domain.Page<Invoice> getAllInvoices(org.springframework.data.domain.Pageable pageable) {
-    return invoiceRepository.findAll(pageable);
+  public org.springframework.data.domain.Page<Invoice> getAllInvoices(String search, Long customerId, Long productId, org.springframework.data.domain.Pageable pageable) {
+    // Evitamos enviar null a la consulta LIKE de la base de datos
+    String finalSearch = (search != null && !search.trim().isEmpty()) ? search : "";
+
+    return invoiceRepository.searchInvoices(finalSearch, customerId, productId, pageable);
   }
 }
