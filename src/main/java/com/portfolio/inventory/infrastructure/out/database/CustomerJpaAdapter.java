@@ -49,6 +49,11 @@ public class CustomerJpaAdapter implements CustomerRepository {
     return repository.existsByEmail(email);
   }
 
+  @Override
+  public Page<Customer> searchCustomers(String search, Pageable pageable) {
+    return repository.searchCustomers(search, pageable).map(this::toDomain);
+  }
+
   private Customer toDomain(CustomerEntity entity) {
     return Customer.builder()
       .id(entity.getId())

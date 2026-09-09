@@ -34,10 +34,11 @@ public class CustomerController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener catálogo de clientes paginado")
+  @Operation(summary = "Obtener catálogo de clientes paginado y filtrado")
   public ResponseEntity<Page<Customer>> getAll(
+    @RequestParam(required = false) String search,
     @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
-    return ResponseEntity.ok(customerService.getAllCustomers(pageable));
+    return ResponseEntity.ok(customerService.getAllCustomers(search, pageable));
   }
 
   @GetMapping("/{id}")

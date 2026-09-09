@@ -21,8 +21,9 @@ public class CustomerService {
     return customerRepository.save(customer);
   }
 
-  public Page<Customer> getAllCustomers(Pageable pageable) {
-    return customerRepository.findAll(pageable);
+  public Page<Customer> getAllCustomers(String search, Pageable pageable) {
+    String finalSearch = (search != null && !search.trim().isEmpty()) ? search : "";
+    return customerRepository.searchCustomers(finalSearch, pageable);
   }
 
   public Customer getCustomerById(Long id) {
