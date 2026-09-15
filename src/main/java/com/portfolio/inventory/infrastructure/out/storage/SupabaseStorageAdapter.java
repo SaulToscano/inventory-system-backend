@@ -23,7 +23,7 @@ public class SupabaseStorageAdapter implements FileStoragePort {
 
     this.apiKey = apiKey;
 
-    // Estructura: /bucket/carpeta/archivo
+    // Structure: /bucket/folder/file
     this.uploadUrl = supabaseUrl + "/storage/v1/object/" + bucketName + "/" + folderName + "/";
     this.publicUrlPrefix = supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + folderName + "/";
 

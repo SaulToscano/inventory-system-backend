@@ -20,14 +20,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/invoices")
 @RequiredArgsConstructor
-@Tag(name = "Invoices", description = "Facturación y Salidas de Inventario")
+@Tag(name = "Invoices", description = "Invoicing and Inventory Issues")
 public class InvoiceController {
 
   private final InvoiceService invoiceService;
   private final InvoicePdfService invoicePdfService;
 
   @GetMapping
-  @Operation(summary = "Obtener el listado general de facturas (Paginado y filtrado)")
+  @Operation(summary = "Retrieve the general list of invoices (paginated and filtered)")
   public ResponseEntity<org.springframework.data.domain.Page<Invoice>> getAll(
     @RequestParam(required = false) String search,
     @RequestParam(required = false) Long customerId,
@@ -38,13 +38,12 @@ public class InvoiceController {
   }
 
   @PostMapping
-  @Operation(summary = "Generar una nueva factura y descontar stock por lotes")
+  @Operation(summary = "Generate a new invoice and deduct stock by batch.")
   public ResponseEntity<Invoice> create(@Valid @RequestBody InvoiceRequest request) {
 
-    // 1. Convertir el DTO de los items al Dominio
     List<InvoiceItem> items = request.items().stream().map(dto ->
       InvoiceItem.builder()
-        .stockEntry(StockEntry.builder().id(dto.stockEntryId()).build()) // Pasamos el ID del lote
+        .stockEntry(StockEntry.builder().id(dto.stockEntryId()).build())
         .quantity(dto.quantity())
         .unitPrice(dto.unitPrice())
         .discount(dto.discount())
@@ -52,7 +51,6 @@ public class InvoiceController {
         .build()
     ).toList();
 
-    // 2. Convertir el pago inicial (si existe)
     Payment initialPayment = null;
     if (request.initialPayment() != null) {
       initialPayment = Payment.builder()
@@ -62,14 +60,13 @@ public class InvoiceController {
         .build();
     }
 
-    // 3. Llamar al servicio
     Invoice generatedInvoice = invoiceService.generateInvoice(request.customerId(), request.issueDate(), items, initialPayment);
 
     return new ResponseEntity<>(generatedInvoice, HttpStatus.CREATED);
   }
 
   @PostMapping("/{id}/payments")
-  @Operation(summary = "Registrar un abono a una factura existente")
+  @Operation(summary = "Record a payment against an existing invoice")
   public ResponseEntity<Invoice> addPayment(
     @PathVariable Long id,
     @Valid @RequestBody PaymentRequest request) {
@@ -78,13 +75,12 @@ public class InvoiceController {
   }
 
   @GetMapping(value = "/{id}/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
-  @Operation(summary = "Descargar factura en formato PDF")
+  @Operation(summary = "Download invoice in PDF format")
   public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable Long id) {
 
     byte[] pdfBytes = invoicePdfService.generateInvoicePdf(id);
 
     return ResponseEntity.ok()
-      // Esto le indica al navegador que es un archivo adjunto que debe descargar
       .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=factura_" + id + ".pdf")
       .body(pdfBytes);
   }

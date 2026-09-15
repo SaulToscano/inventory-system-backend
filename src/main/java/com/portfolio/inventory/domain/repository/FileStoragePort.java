@@ -2,7 +2,7 @@ package com.portfolio.inventory.domain.repository;
 
 public interface FileStoragePort {
   /**
-   * Sube un archivo y retorna la URL pública para acceder a él.
+   * Uploads a file and returns the public URL to access it.
    */
   String uploadFile(String fileName, byte[] fileData, String contentType);
 }

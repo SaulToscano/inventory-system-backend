@@ -16,7 +16,7 @@ public class CustomerService {
 
   public Customer createCustomer(Customer customer) {
     if (customerRepository.existsByEmail(customer.getEmail())) {
-      throw new IllegalArgumentException("Ya existe un cliente registrado con ese correo electrónico");
+      throw new IllegalArgumentException("A customer with that email address is already registered.");
     }
     return customerRepository.save(customer);
   }
@@ -28,16 +28,15 @@ public class CustomerService {
 
   public Customer getCustomerById(Long id) {
     return customerRepository.findById(id)
-      .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con el ID: " + id));
+      .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + id));
   }
 
   public Customer updateCustomer(Long id, Customer customerUpdate) {
     Customer existingCustomer = getCustomerById(id);
 
-    // Verificamos que si cambia el correo, no choque con otro existente
     if (!existingCustomer.getEmail().equals(customerUpdate.getEmail()) &&
       customerRepository.existsByEmail(customerUpdate.getEmail())) {
-      throw new IllegalArgumentException("El nuevo correo electrónico ya está en uso por otro cliente");
+      throw new IllegalArgumentException("The new email address is already in use by another customer.");
     }
 
     existingCustomer.setName(customerUpdate.getName());

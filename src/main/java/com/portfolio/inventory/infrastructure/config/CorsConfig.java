@@ -16,15 +16,10 @@ public class CorsConfig {
 
     CorsConfiguration config = new CorsConfiguration();
 
-    // Permitir credenciales del navegador
     config.setAllowCredentials(true);
-
-    // Angular
     config.setAllowedOrigins(
       Arrays.asList("http://localhost:4200")
     );
-
-    // Headers que puede enviar Angular
     config.setAllowedHeaders(
       Arrays.asList(
         "Origin",
@@ -33,8 +28,6 @@ public class CorsConfig {
         "Authorization"
       )
     );
-
-    // Métodos HTTP permitidos
     config.setAllowedMethods(
       Arrays.asList(
         "GET",
@@ -46,8 +39,7 @@ public class CorsConfig {
       )
     );
 
-    UrlBasedCorsConfigurationSource source =
-      new UrlBasedCorsConfigurationSource();
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
     source.registerCorsConfiguration("/**", config);
 

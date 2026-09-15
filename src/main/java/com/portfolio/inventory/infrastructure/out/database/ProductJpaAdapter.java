@@ -18,13 +18,11 @@ public class ProductJpaAdapter implements ProductRepository {
 
   @Override
   public Product save(Product product) {
-    // 1. Mapeamos la Categoría (Hibernate solo necesita el ID para hacer la relación)
     CategoryEntity categoryEntity = CategoryEntity.builder()
       .id(product.getCategory().getId())
       .name(product.getCategory().getName())
       .build();
 
-    // 2. Mapeamos el Producto
     ProductEntity entity = ProductEntity.builder()
       .id(product.getId())
       .name(product.getName())
@@ -63,11 +61,9 @@ public class ProductJpaAdapter implements ProductRepository {
 
   @Override
   public Page<Product> searchAndFilterProducts(String search, Long categoryId, Pageable pageable) {
-    // Llamamos a tu repositorio de Spring Data y mapeamos la respuesta usando tu propio método toDomain
     return repository.searchAndFilterProducts(search, categoryId, pageable).map(this::toDomain);
   }
 
-  // Método auxiliar para transformar Entidades JPA en Objetos de Dominio puros
   private Product toDomain(ProductEntity entity) {
     Category category = Category.builder()
       .id(entity.getCategory().getId())

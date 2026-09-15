@@ -4,11 +4,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record CustomerRequest(
-  @NotBlank(message = "El nombre del cliente es obligatorio")
+  @NotBlank(message = "The client's name is mandatory.")
   String name,
 
-  @NotBlank(message = "El correo electrónico es obligatorio")
-  @Email(message = "El formato del correo electrónico no es válido")
+  @NotBlank(message = "Email is required.")
+  @Email(message = "The email format is invalid.")
   String email,
 
   String address,

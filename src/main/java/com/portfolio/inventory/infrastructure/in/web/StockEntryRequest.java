@@ -7,31 +7,30 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 public record StockEntryRequest(
-  @NotNull(message = "El ID del producto es obligatorio")
+  @NotNull(message = "The product ID is mandatory.")
   Long productId,
 
-  @NotNull(message = "El ID del proveedor es obligatorio")
+  @NotNull(message = "The provider ID is mandatory.")
   Long supplierId,
 
-  @NotNull(message = "La existencia inicial es obligatoria")
-  @PositiveOrZero(message = "La existencia inicial no puede ser negativa")
+  @NotNull(message = "Initial stock is mandatory.")
+  @PositiveOrZero(message = "The initial stock cannot be negative.")
   Integer initialStock,
 
-  @NotNull(message = "La existencia actual es obligatoria")
-  @PositiveOrZero(message = "La existencia actual no puede ser negativa")
+  @NotNull(message = "Current existence is mandatory.")
+  @PositiveOrZero(message = "Current existence cannot be negative.")
   Integer currentStock,
 
-  @NotNull(message = "El precio de compra es obligatorio")
-  @PositiveOrZero(message = "El precio de compra no puede ser negativo")
+  @NotNull(message = "The purchase price is mandatory.")
+  @PositiveOrZero(message = "The purchase price cannot be negative.")
   BigDecimal purchasePrice,
 
-  @NotNull(message = "El precio de venta es obligatorio")
-  @PositiveOrZero(message = "El precio de venta no puede ser negativo")
+  @NotNull(message = "The selling price is mandatory.")
+  @PositiveOrZero(message = "The selling price cannot be negative.")
   BigDecimal salePrice,
 
-  @NotBlank(message = "El nombre del usuario que registra es obligatorio")
+  @NotBlank(message = "The name of the registering user is mandatory.")
   String enteredBy,
 
-  // Lo dejamos opcional temporalmente hasta que integremos Supabase Storage
   String receiptUrl
 ) {}

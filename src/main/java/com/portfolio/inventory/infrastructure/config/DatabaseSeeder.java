@@ -7,6 +7,7 @@ import com.portfolio.inventory.domain.model.enums.PaymentMethod;
 import com.portfolio.inventory.domain.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
-
-  // Inyectamos todos los repositorios de tu dominio
   private final CategoryRepository categoryRepository;
   private final SupplierRepository supplierRepository;
   private final CustomerRepository customerRepository;
@@ -29,16 +28,15 @@ public class DatabaseSeeder implements CommandLineRunner {
   private final InvoiceRepository invoiceRepository;
 
   @Override
-  public void run(String... args) throws Exception {
-    // Candado: Si ya hay al menos 1 categoría, significa que la BD ya tiene datos y abortamos el Seed
+  public void run(String @NonNull ... args) throws Exception {
     if (!categoryRepository.findAll(PageRequest.of(0, 1)).isEmpty()) {
-      log.info("La base de datos ya contiene información. Se omite el Database Seeder.");
+      log.info("The database already contains information. The Database Seeder is skipped.");
       return;
     }
 
-    log.info("Iniciando el llenado de la base de datos con Mock Data...");
+    log.info("Starting to populate the database with mock data....");
 
-    // 1. Crear Categorías
+    // 1. Create Categories
     Category electronics = categoryRepository.save(Category.builder()
       .name("Electrónica")
       .description("Dispositivos y gadgets tecnológicos")
@@ -49,7 +47,7 @@ public class DatabaseSeeder implements CommandLineRunner {
       .description("Productos de consumo diario")
       .build());
 
-    // 2. Crear Proveedores
+    // 2. Create Suppliers
     Supplier techSupplier = supplierRepository.save(Supplier.builder()
       .name("TechCorp Global")
       .email("ventas@techcorp.com")
@@ -64,7 +62,7 @@ public class DatabaseSeeder implements CommandLineRunner {
       .address("Carretera Norte Km 45")
       .build());
 
-    // 3. Crear Clientes
+    // 3. Create Customers
     Customer vipCustomer = customerRepository.save(Customer.builder()
       .name("Empresa Innovadora S.A.")
       .email("compras@innovadora.com")
@@ -79,7 +77,7 @@ public class DatabaseSeeder implements CommandLineRunner {
       .address("Calle Principal 456")
       .build());
 
-    // 4. Crear Productos
+    // 4. Create Products
     Product laptop = productRepository.save(Product.builder()
       .name("Laptop Pro 15")
       .details("16GB RAM, 512GB SSD")
@@ -92,7 +90,7 @@ public class DatabaseSeeder implements CommandLineRunner {
       .category(groceries)
       .build());
 
-    // 5. Crear Entradas de Inventario (Lotes)
+    // 5. Create Inventory Entries (Batches)
     StockEntry laptopEntry = stockEntryRepository.save(StockEntry.builder()
       .product(laptop)
       .supplier(techSupplier)
@@ -101,7 +99,7 @@ public class DatabaseSeeder implements CommandLineRunner {
       .purchasePrice(new BigDecimal("800.00"))
       .salePrice(new BigDecimal("1200.00"))
       .enteredBy("Admin")
-      .entryDate(LocalDateTime.now().minusDays(10)) // Entró hace 10 días
+      .entryDate(LocalDateTime.now().minusDays(10))
       .receiptUrl("https://ejemplo.com/ticket-laptop.pdf")
       .build());
 
@@ -116,7 +114,7 @@ public class DatabaseSeeder implements CommandLineRunner {
       .entryDate(LocalDateTime.now().minusDays(2))
       .build());
 
-    // 6. Crear una Venta Simulada (Invoice)
+    // 6. Create a Simulated Sale (Invoice)
     InvoiceItem item1 = InvoiceItem.builder()
       .stockEntry(laptopEntry)
       .quantity(2)
@@ -141,17 +139,16 @@ public class DatabaseSeeder implements CommandLineRunner {
       .totalGross(new BigDecimal("2400.00"))
       .totalDiscount(BigDecimal.ZERO)
       .netAmount(new BigDecimal("2400.00"))
-      .balanceDue(new BigDecimal("1400.00")) // Queda a deber 1400
+      .balanceDue(new BigDecimal("1400.00"))
       .status(InvoiceStatus.PARTIAL_PAID)
-      .payments(List.of(initialPayment)) // Registramos el abono inicial
+      .payments(List.of(initialPayment))
       .build();
 
     invoiceRepository.save(invoice);
 
-    // Actualizar el stock del lote tras la venta
     laptopEntry.setCurrentStock(48);
     stockEntryRepository.save(laptopEntry);
 
-    log.info("¡Mock Data inyectada con éxito! La base de datos está lista para pruebas.");
+    log.info("¡Mock data successfully injected! The database is ready for testing.");
   }
 }

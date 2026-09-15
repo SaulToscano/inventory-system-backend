@@ -16,36 +16,35 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
-@Tag(name = "Products", description = "CRUD de Productos del Inventario")
+@Tag(name = "Products", description = "Inventory Product CRUD")
 public class ProductController {
 
   private final ProductService productService;
 
   @PostMapping
-  @Operation(summary = "Crear un nuevo producto vinculado a una categoría")
+  @Operation(summary = "Create a new product linked to a category")
   public ResponseEntity<Product> create(@Valid @RequestBody ProductRequest request) {
     Product product = Product.builder()
       .name(request.name())
       .details(request.details())
       .build();
 
-    // Le pasamos el producto y el ID de la categoría al servicio
     return new ResponseEntity<>(productService.createProduct(product, request.categoryId()), HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Actualizar un producto")
+  @Operation(summary = "Update a product")
   public ResponseEntity<Product> update(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
     Product product = Product.builder()
       .name(request.name())
       .details(request.details())
       .build();
-    // Asegúrate de crear este método en tu ProductService
+
     return ResponseEntity.ok(productService.updateProduct(id, product, request.categoryId()));
   }
 
   @GetMapping
-  @Operation(summary = "Obtener todos los productos paginados y filtrados")
+  @Operation(summary = "Retrieve all products, paginated and filtered.")
   public ResponseEntity<Page<Product>> getAll(
     @RequestParam(required = false) String search,
     @RequestParam(required = false) Long categoryId,
@@ -55,13 +54,13 @@ public class ProductController {
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Obtener un producto por ID")
+  @Operation(summary = "Get a product by ID")
   public ResponseEntity<Product> getById(@PathVariable Long id) {
     return ResponseEntity.ok(productService.getProductById(id));
   }
 
   @GetMapping("/category/{categoryId}")
-  @Operation(summary = "Obtener todos los productos de una categoría específica")
+  @Operation(summary = "Get all products from a specific category")
   public ResponseEntity<Page<Product>> getByCategory(
     @PathVariable Long categoryId,
     @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
@@ -69,7 +68,7 @@ public class ProductController {
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Eliminar un producto")
+  @Operation(summary = "Delete a product")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     productService.deleteProduct(id);
     return ResponseEntity.noContent().build();

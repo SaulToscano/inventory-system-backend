@@ -27,15 +27,13 @@ public class StockEntryService {
   private final FileStoragePort fileStoragePort;
 
   public StockEntry createStockEntry(StockEntry stockEntry, Long productId, Long supplierId, MultipartFile file) {
-    // 1. Validar que el Producto exista
     Product product = productRepository.findById(productId)
-      .orElseThrow(() -> new ResourceNotFoundException("No se puede registrar la entrada: El producto con ID " + productId + " no existe"));
+      .orElseThrow(() -> new ResourceNotFoundException("Cannot register the entry: The product with ID " + productId + " does not exist"));
 
-    // 2. Validar que el Proveedor exista
     Supplier supplier = supplierRepository.findById(supplierId)
-      .orElseThrow(() -> new ResourceNotFoundException("No se puede registrar la entrada: El proveedor con ID " + supplierId + " no existe"));
+      .orElseThrow(() -> new ResourceNotFoundException("Cannot register the entry: The supplier with ID " + supplierId + " does not exist"));
 
-    // LÓGICA DE SUBIDA DE ARCHIVO
+    // File Upload Logic
     if (file != null && !file.isEmpty()) {
       try {
         String fileUrl = fileStoragePort.uploadFile(
@@ -45,16 +43,14 @@ public class StockEntryService {
         );
         stockEntry.setReceiptUrl(fileUrl);
       } catch (IOException e) {
-        throw new RuntimeException("Error al procesar el archivo del comprobante", e);
+        throw new RuntimeException("Error processing the voucher file", e);
       }
     }
 
-    // 3. Vincular relaciones y establecer la fecha de auditoría automática
     stockEntry.setProduct(product);
     stockEntry.setSupplier(supplier);
     stockEntry.setEntryDate(LocalDateTime.now());
 
-    // 4. Guardar el registro
     return stockEntryRepository.save(stockEntry);
   }
 
@@ -65,24 +61,20 @@ public class StockEntryService {
 
   public StockEntry getById(Long id) {
     return stockEntryRepository.findById(id)
-      .orElseThrow(() -> new ResourceNotFoundException("Registro de inventario no encontrado con el ID: " + id));
+      .orElseThrow(() -> new ResourceNotFoundException("Inventory record not found with ID: " + id));
   }
 
   public Page<StockEntry> getByProductId(Long productId, Pageable pageable) {
     if (productRepository.findById(productId).isEmpty()) {
-      throw new ResourceNotFoundException("El producto con ID " + productId + " no existe");
+      throw new ResourceNotFoundException("The product with ID " + productId + " does not exist");
     }
     return stockEntryRepository.findByProductId(productId, pageable);
   }
 
   public Page<StockEntry> getBySupplierId(Long supplierId, Pageable pageable) {
     if (supplierRepository.findById(supplierId).isEmpty()) {
-      throw new ResourceNotFoundException("El proveedor con ID " + supplierId + " no existe");
+      throw new ResourceNotFoundException("The supplier with ID " + supplierId + " does not exist");
     }
     return stockEntryRepository.findBySupplierId(supplierId, pageable);
   }
-
-  // Nota: Por reglas de auditoría contable, usualmente las entradas de stock NO se eliminan ni modifican.
-  // Si hay un error, se hace un movimiento de compensación (salida).
-  // Por simplicidad del portafolio, dejaremos fuera el update/delete, o puedes agregarlos si lo prefieres.
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface SpringDataReportQueries extends JpaRepository<InvoiceEntity, Long> {
 
-  // 1. DUE REPORT (Cuentas por cobrar)
+  // 1. DUE REPORT
   @Query("SELECT new com.portfolio.inventory.domain.model.report.DueReportItem(" +
     "i.invoiceNumber, c.name, i.issueDate, i.netAmount, i.balanceDue) " +
     "FROM InvoiceEntity i JOIN i.customer c " +
@@ -26,7 +26,7 @@ public interface SpringDataReportQueries extends JpaRepository<InvoiceEntity, Lo
     @Param("dateFrom") LocalDateTime dateFrom,
     @Param("dateTo") LocalDateTime dateTo);
 
-  // 2. SELL REPORT (Reporte de ventas detallado)
+  // 2. SELL REPORT
   @Query("SELECT new com.portfolio.inventory.domain.model.report.SellReportItem(" +
     "i.invoiceNumber, i.issueDate, c.name, p.name, item.quantity, item.unitPrice, item.subTotal) " +
     "FROM InvoiceItemEntity item " +
@@ -45,7 +45,7 @@ public interface SpringDataReportQueries extends JpaRepository<InvoiceEntity, Lo
     @Param("dateFrom") LocalDateTime dateFrom,
     @Param("dateTo") LocalDateTime dateTo);
 
-  // 3. STOCK REPORT (Reporte de existencias por lotes)
+  // 3. STOCK REPORT
   @Query("SELECT new com.portfolio.inventory.domain.model.report.StockReportItem(" +
     "se.id, p.name, c.name, s.name, se.initialStock, se.currentStock, se.purchasePrice, se.salePrice, se.entryDate) " +
     "FROM StockEntryEntity se " +
@@ -65,7 +65,7 @@ public interface SpringDataReportQueries extends JpaRepository<InvoiceEntity, Lo
     @Param("dateFrom") LocalDateTime dateFrom,
     @Param("dateTo") LocalDateTime dateTo);
 
-  // 4. PROFIT REPORT (Reporte de Ganancias Netas)
+  // 4. PROFIT REPORT
   @Query("SELECT new com.portfolio.inventory.domain.model.report.ProfitReportItem(" +
     "i.invoiceNumber, i.issueDate, p.name, item.quantity, item.subTotal, se.purchasePrice) " +
     "FROM InvoiceItemEntity item " +
@@ -84,7 +84,7 @@ public interface SpringDataReportQueries extends JpaRepository<InvoiceEntity, Lo
     @Param("dateFrom") LocalDateTime dateFrom,
     @Param("dateTo") LocalDateTime dateTo);
 
-  // 5. INVOICE REPORT (Resumen General de Facturas)
+  // 5. INVOICE REPORT
   @Query("SELECT new com.portfolio.inventory.domain.model.report.InvoiceReportItem(" +
     "i.invoiceNumber, i.issueDate, c.name, i.totalGross, i.totalDiscount, i.netAmount, i.balanceDue, i.status) " +
     "FROM InvoiceEntity i JOIN i.customer c " +

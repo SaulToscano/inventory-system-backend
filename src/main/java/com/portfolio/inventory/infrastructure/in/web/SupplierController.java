@@ -22,7 +22,7 @@ public class SupplierController {
   private final SupplierService supplierService;
 
   @PostMapping
-  @Operation(summary = "Registrar un nuevo proveedor")
+  @Operation(summary = "Register a new supplier")
   public ResponseEntity<Supplier> create(@Valid @RequestBody SupplierRequest request) {
     Supplier supplier = Supplier.builder()
       .name(request.name())
@@ -34,7 +34,7 @@ public class SupplierController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener todos los proveedores paginados y filtrados")
+  @Operation(summary = "Retrieve all suppliers, paginated and filtered.")
   public ResponseEntity<Page<Supplier>> getAll(
     @RequestParam(required = false) String search,
     @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
@@ -42,13 +42,13 @@ public class SupplierController {
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Obtener un proveedor por ID")
+  @Operation(summary = "Get a provider by ID")
   public ResponseEntity<Supplier> getById(@PathVariable Long id) {
     return ResponseEntity.ok(supplierService.getSupplierById(id));
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Actualizar los datos de un proveedor")
+  @Operation(summary = "Update a supplier's details")
   public ResponseEntity<Supplier> update(@PathVariable Long id, @Valid @RequestBody SupplierRequest request) {
     Supplier supplier = Supplier.builder()
       .name(request.name())
@@ -60,7 +60,7 @@ public class SupplierController {
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Eliminar un proveedor del catálogo")
+  @Operation(summary = "Remove a supplier from the catalog")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     supplierService.deleteSupplier(id);
     return ResponseEntity.noContent().build();

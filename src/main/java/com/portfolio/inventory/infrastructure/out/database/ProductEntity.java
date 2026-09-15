@@ -19,11 +19,9 @@ public class ProductEntity {
   @Column(nullable = false, unique = true)
   private String name;
 
-  @Column(columnDefinition = "TEXT") // Usamos TEXT por si "detalles" es un texto muy largo
+  @Column(columnDefinition = "TEXT")
   private String details;
 
-  // Aquí está la magia del "Link" (Foreign Key)
-  // FetchType.LAZY hace que la categoría no se cargue de la BD hasta que no la pidas explícitamente, mejorando el rendimiento.
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id", nullable = false)
   private CategoryEntity category;

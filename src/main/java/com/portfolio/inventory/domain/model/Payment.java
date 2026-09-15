@@ -11,5 +11,5 @@ public class Payment {
   private BigDecimal amount;
   private LocalDateTime paymentDate;
   private PaymentMethod method;
-  private String bankReference; // Solo si es por banco
+  private String bankReference;
 }

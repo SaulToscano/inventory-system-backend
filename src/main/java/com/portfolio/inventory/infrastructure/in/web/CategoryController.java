@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
-@Tag(name = "Categories", description = "CRUD de Categorías")
+@Tag(name = "Categories", description = "Category CRUD")
 public class CategoryController {
 
   private final CategoryService categoryService;
 
   @PostMapping
-  @Operation(summary = "Crear una nueva categoría")
+  @Operation(summary = "Create a new category")
   public ResponseEntity<Category> create(@Valid @RequestBody CategoryRequest request) {
     Category category = Category.builder()
       .name(request.name())
@@ -32,7 +32,7 @@ public class CategoryController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener todas las categorías paginadas y filtradas")
+  @Operation(summary = "Retrieve all categories, paginated and filtered.")
   public ResponseEntity<Page<Category>> getAll(
     @RequestParam(required = false) String search,
     @PageableDefault(size = 10, page = 0, sort = "id") Pageable pageable) {
@@ -41,13 +41,13 @@ public class CategoryController {
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Obtener una categoría por ID")
+  @Operation(summary = "Get a category by ID")
   public ResponseEntity<Category> getById(@PathVariable Long id) {
     return ResponseEntity.ok(categoryService.getCategoryById(id));
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Actualizar una categoría")
+  @Operation(summary = "Update a category")
   public ResponseEntity<Category> update(@PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
     Category category = Category.builder()
       .name(request.name())
@@ -57,7 +57,7 @@ public class CategoryController {
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Eliminar una categoría")
+  @Operation(summary = "Delete a category")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     categoryService.deleteCategory(id);
     return ResponseEntity.noContent().build();

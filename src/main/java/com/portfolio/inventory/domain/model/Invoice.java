@@ -9,18 +9,17 @@ import java.util.List;
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class Invoice {
   private Long id;
-  private String invoiceNumber; // Ej: FAC-2026-0001
+  private String invoiceNumber;
   private LocalDateTime issueDate;
 
   private Customer customer;
   private List<InvoiceItem> items;
   private List<Payment> payments;
 
-  // Totales financieros
-  private BigDecimal totalGross; // Subtotal sin descuentos
+  private BigDecimal totalGross;
   private BigDecimal totalDiscount;
-  private BigDecimal netAmount; // Total a pagar
-  private BigDecimal balanceDue; // Saldo pendiente
+  private BigDecimal netAmount;
+  private BigDecimal balanceDue;
 
   private InvoiceStatus status;
 }

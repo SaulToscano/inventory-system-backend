@@ -2,7 +2,6 @@ package com.portfolio.inventory.infrastructure.in.web;
 
 import java.time.LocalDateTime;
 
-// Todos son opcionales
 public record ReportFilterRequest(
   LocalDateTime dateFrom,
   LocalDateTime dateTo,

@@ -10,8 +10,6 @@ public interface StockEntryRepository {
   StockEntry save(StockEntry stockEntry);
   Optional<StockEntry> findById(Long id);
   Page<StockEntry> findAll(Pageable pageable);
-
-  // Útiles para el frontend más adelante
   Page<StockEntry> findByProductId(Long productId, Pageable pageable);
   Page<StockEntry> findBySupplierId(Long supplierId, Pageable pageable);
   Page<StockEntry> searchAndFilterStockEntries(String search, Long productId, Long supplierId, Pageable pageable);

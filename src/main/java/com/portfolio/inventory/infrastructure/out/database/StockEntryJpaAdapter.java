@@ -14,7 +14,6 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class StockEntryJpaAdapter implements StockEntryRepository {
-
   private final SpringDataStockEntryRepository repository;
 
   @Override
@@ -40,11 +39,8 @@ public class StockEntryJpaAdapter implements StockEntryRepository {
       .entryDate(entry.getEntryDate())
       .build();
 
-    // 1. Guardamos en la base de datos
     StockEntryEntity savedEntity = repository.save(entity);
 
-    // 2. ¡EL TRUCO! En lugar de llamar a toDomain(savedEntity) que lanza el error de Proxy,
-    // simplemente le ponemos el nuevo ID de la BD a nuestro objeto original y lo devolvemos intacto.
     entry.setId(savedEntity.getId());
     return entry;
   }
@@ -76,7 +72,6 @@ public class StockEntryJpaAdapter implements StockEntryRepository {
   }
 
   private StockEntry toDomain(StockEntryEntity entity) {
-    // Mapeo básico para no saturar la memoria, solo traemos lo esencial
     Product product = Product.builder()
       .id(entity.getProduct().getId())
       .name(entity.getProduct().getName())

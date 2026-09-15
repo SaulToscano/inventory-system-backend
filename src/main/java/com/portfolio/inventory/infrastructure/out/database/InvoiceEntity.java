@@ -27,7 +27,6 @@ public class InvoiceEntity {
   @JoinColumn(name = "customer_id", nullable = false)
   private CustomerEntity customer;
 
-  // CascadeType.ALL significa que si guardas la factura, sus items se guardan solos
   @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<InvoiceItemEntity> items = new ArrayList<>();
 

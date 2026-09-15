@@ -9,5 +9,5 @@ public record ErrorMessage(
   String error,
   String message,
   String path,
-  List<String> details // Útil para listar múltiples errores de validación
+  List<String> details
 ) {}

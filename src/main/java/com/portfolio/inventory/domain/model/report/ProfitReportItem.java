@@ -8,11 +8,11 @@ public record ProfitReportItem(
   LocalDateTime date,
   String productName,
   Integer quantity,
-  BigDecimal revenue, // Lo que el cliente pagó
-  BigDecimal cost,    // Lo que te costó a ti
-  BigDecimal profit   // Tu ganancia neta
+  BigDecimal revenue, // What the customer paid
+  BigDecimal cost,    // What it cost you
+  BigDecimal profit   // Your net profit
 ) {
-  // Constructor especial para JPQL que calcula la ganancia automáticamente
+  // Special constructor for JPQL that automatically calculates the profit.
   public ProfitReportItem(String invoiceNumber, LocalDateTime date, String productName, Integer quantity, BigDecimal revenue, BigDecimal unitCost) {
     this(
       invoiceNumber,

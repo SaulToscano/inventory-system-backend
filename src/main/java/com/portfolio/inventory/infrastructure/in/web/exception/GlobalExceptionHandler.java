@@ -16,7 +16,7 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  // 1. Manejar recursos no encontrados (Error 404)
+  // 1. Handle resources not found (Error 404)
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorMessage> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
     ErrorMessage message = new ErrorMessage(
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
   }
 
-  // 2. Manejar reglas de negocio rotas, como categoría duplicada (Error 400)
+  // 2. Handle violated business rules, such as a duplicate category (Error 400)
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ErrorMessage> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
     ErrorMessage message = new ErrorMessage(
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
   }
 
-  // 3. Manejar errores de validación de DTOs con @Valid (Error 400)
+  // 3. Handling DTO validation errors with @Valid (400 Error)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorMessage> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
     List<String> errors = new ArrayList<>();
@@ -56,14 +56,14 @@ public class GlobalExceptionHandler {
       LocalDateTime.now(),
       HttpStatus.BAD_REQUEST.value(),
       HttpStatus.BAD_REQUEST.getReasonPhrase(),
-      "Error en la validación de los datos enviados",
+      "Error validating the submitted data",
       request.getDescription(false).replace("uri=", ""),
-      errors // Aquí enviamos la lista de campos que fallaron
+      errors
     );
     return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
   }
 
-  // 4. Manejo global para cualquier otro error (Error 500)
+  // 4. Global handling for any other error (Error 500)
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorMessage> handleGlobalException(Exception ex, WebRequest request) {
     ex.printStackTrace();
@@ -72,11 +72,10 @@ public class GlobalExceptionHandler {
       LocalDateTime.now(),
       HttpStatus.INTERNAL_SERVER_ERROR.value(),
       HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-      "Ha ocurrido un error inesperado en el servidor",
+      "An unexpected error has occurred on the server.",
       request.getDescription(false).replace("uri=", ""),
       null
     );
-    // Aquí podrías usar un logger (ej. log.error("Error global", ex)) para no perder el rastro del fallo real
     return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

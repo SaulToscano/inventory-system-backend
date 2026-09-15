@@ -10,6 +10,6 @@ public class TestController {
 
   @GetMapping("/ping")
   public String ping() {
-    return "¡Login exitoso! Tu backend está validando el JWT de Supabase correctamente.";
+    return "Login successful! Your backend is correctly validating the Supabase JWT.";
   }
 }

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record InvoiceItemRequest(
-  @NotNull Long stockEntryId, // ¡Aquí está la clave de tu idea!
+  @NotNull Long stockEntryId,
   @NotNull @Positive Integer quantity,
   @NotNull @Positive BigDecimal unitPrice,
   BigDecimal discount,

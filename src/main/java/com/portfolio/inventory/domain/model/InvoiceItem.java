@@ -12,5 +12,5 @@ public class InvoiceItem {
   private BigDecimal unitPrice;
   private BigDecimal discount;
   private DiscountType discountType;
-  private BigDecimal subTotal; // subtotal de esta línea
+  private BigDecimal subTotal;
 }

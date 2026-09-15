@@ -19,7 +19,7 @@ public class CustomerEntity {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false, unique = true) // El correo debe ser único
+  @Column(nullable = false, unique = true)
   private String email;
 
   private String address;

@@ -17,15 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/stock-entries")
 @RequiredArgsConstructor
-@Tag(name = "Stock Entries", description = "Gestión de Entradas de Inventario y Facturación")
+@Tag(name = "Stock Entries", description = "Inventory Receipt and Invoicing Management")
 public class StockEntryController {
-
   private final StockEntryService stockEntryService;
 
   @PostMapping(consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
-  @Operation(summary = "Registrar una nueva entrada de inventario con comprobante opcional")
+  @Operation(summary = "Record a new inventory entry with an optional receipt")
   public ResponseEntity<StockEntry> create(
-    // Separamos la petición en dos partes: el DTO (JSON) y el archivo binario
     @RequestPart("data") @Valid StockEntryRequest request,
     @RequestPart(value = "file", required = false) MultipartFile file
   ) {
@@ -35,7 +33,6 @@ public class StockEntryController {
       .purchasePrice(request.purchasePrice())
       .salePrice(request.salePrice())
       .enteredBy(request.enteredBy())
-      // El receiptUrl ya no viene del request de texto, lo genera el servicio
       .build();
 
     return new ResponseEntity<>(
@@ -45,7 +42,7 @@ public class StockEntryController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener todo el historial de entradas filtrado y paginado")
+  @Operation(summary = "Retrieve the full history of entries, filtered and paginated.")
   public ResponseEntity<Page<StockEntry>> getAll(
     @RequestParam(required = false) String search,
     @RequestParam(required = false) Long productId,
@@ -56,13 +53,13 @@ public class StockEntryController {
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Obtener una entrada específica por ID")
+  @Operation(summary = "Retrieve a specific entry by ID")
   public ResponseEntity<StockEntry> getById(@PathVariable Long id) {
     return ResponseEntity.ok(stockEntryService.getById(id));
   }
 
   @GetMapping("/product/{productId}")
-  @Operation(summary = "Obtener historial de entradas de un producto")
+  @Operation(summary = "Retrieve product entry history")
   public ResponseEntity<Page<StockEntry>> getByProduct(
     @PathVariable Long productId,
     @PageableDefault(size = 10, page = 0, sort = "entryDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {
@@ -70,7 +67,7 @@ public class StockEntryController {
   }
 
   @GetMapping("/supplier/{supplierId}")
-  @Operation(summary = "Obtener historial de facturación de un proveedor")
+  @Operation(summary = "Retrieve a supplier's billing history")
   public ResponseEntity<Page<StockEntry>> getBySupplier(
     @PathVariable Long supplierId,
     @PageableDefault(size = 10, page = 0, sort = "entryDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable) {

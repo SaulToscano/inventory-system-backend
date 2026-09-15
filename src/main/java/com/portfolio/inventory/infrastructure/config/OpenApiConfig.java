@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-  info = @Info(title = "Inventory System API", version = "1.0", description = "API para el manejo de inventarios"),
+  info = @Info(title = "Inventory System API", version = "1.0", description = "API for inventory management"),
   security = @SecurityRequirement(name = "Bearer Authentication")
 )
 @SecurityScheme(

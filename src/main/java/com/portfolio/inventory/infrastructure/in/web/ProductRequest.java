@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ProductRequest(
-  @NotBlank(message = "El nombre del producto es obligatorio") String name,
+  @NotBlank(message = "The product name is mandatory.") String name,
   String details,
-  @NotNull(message = "El ID de la categoría es obligatorio") Long categoryId
+  @NotNull(message = "The category ID is mandatory.") Long categoryId
 ) {}

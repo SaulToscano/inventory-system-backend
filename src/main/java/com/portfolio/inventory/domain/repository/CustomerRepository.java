@@ -11,6 +11,6 @@ public interface CustomerRepository {
   Optional<Customer> findById(Long id);
   Page<Customer> findAll(Pageable pageable);
   void deleteById(Long id);
-  boolean existsByEmail(String email); // Validaremos por email para evitar clientes duplicados
+  boolean existsByEmail(String email);
   Page<Customer> searchCustomers(String search, Pageable pageable);
 }

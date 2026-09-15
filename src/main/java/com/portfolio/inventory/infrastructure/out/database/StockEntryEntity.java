@@ -19,12 +19,10 @@ public class StockEntryEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  // Llave foránea hacia productos
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id", nullable = false)
   private ProductEntity product;
 
-  // Llave foránea hacia proveedores
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "supplier_id", nullable = false)
   private SupplierEntity supplier;
@@ -37,7 +35,7 @@ public class StockEntryEntity {
   @Column(nullable = false)
   private Integer currentStock;
 
-  @Column(nullable = false, precision = 10, scale = 2) // 10 dígitos totales, 2 decimales
+  @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal purchasePrice;
 
   @Column(nullable = false, precision = 10, scale = 2)

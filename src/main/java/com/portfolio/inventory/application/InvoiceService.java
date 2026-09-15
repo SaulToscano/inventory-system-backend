@@ -25,60 +25,41 @@ public class InvoiceService {
   private final CustomerRepository customerRepository;
   private final StockEntryRepository stockEntryRepository;
 
-  /**
-   * @Transactional asegura que si ocurre un error (ej. no hay stock),
-   * NADA se guarda en la base de datos, evitando inconsistencias.
-   */
   @Transactional
   public Invoice generateInvoice(Long customerId, LocalDateTime issueDate, List<InvoiceItem> items, Payment initialPayment) {
+    Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new ResourceNotFoundException("Client not found"));
 
-    // 1. Validar Cliente
-    Customer customer = customerRepository.findById(customerId)
-      .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
-
-    // 2. Inicializar totales de la factura
     BigDecimal totalGross = BigDecimal.ZERO;
     BigDecimal totalDiscount = BigDecimal.ZERO;
 
-    // 3. Procesar cada producto (Matemáticas y Validación de Stock)
+    // Process each product (Calculations and Stock Validation)
     for (InvoiceItem item : items) {
       StockEntry stockEntry = stockEntryRepository.findById(item.getStockEntry().getId())
-        .orElseThrow(() -> new ResourceNotFoundException("Lote de inventario no encontrado"));
+        .orElseThrow(() -> new ResourceNotFoundException("Inventory batch not found"));
 
-      // Validar existencia
       if (stockEntry.getCurrentStock() < item.getQuantity()) {
-        throw new IllegalArgumentException("Stock insuficiente en la entrada seleccionada");
+        throw new IllegalArgumentException("Insufficient stock at the selected entrance");
       }
 
-      // Restar stock
       stockEntry.setCurrentStock(stockEntry.getCurrentStock() - item.getQuantity());
       stockEntryRepository.save(stockEntry);
 
-      // Calcular Subtotal del Item (Precio * Cantidad)
       BigDecimal itemGrossAmount = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-
-      // Calcular Descuento del Item
       BigDecimal itemDiscountAmount = calculateItemDiscount(itemGrossAmount, item.getDiscount(), item.getDiscountType());
-
-      // Calcular Neto del Item
       BigDecimal itemNetAmount = itemGrossAmount.subtract(itemDiscountAmount);
 
-      // Setear valores en el item
       item.setStockEntry(stockEntry);
       item.setSubTotal(itemNetAmount);
 
-      // Sumar a los totales de la factura
       totalGross = totalGross.add(itemGrossAmount);
       totalDiscount = totalDiscount.add(itemDiscountAmount);
     }
 
-    // 4. Calcular Total Final de la Factura
     BigDecimal netAmount = totalGross.subtract(totalDiscount);
-    BigDecimal balanceDue = netAmount; // Inicialmente, debe todo
+    BigDecimal balanceDue = netAmount;
 
-    // 5. Construir la Factura Base
     Invoice invoice = Invoice.builder()
-      .invoiceNumber("FAC-" + System.currentTimeMillis()) // Generador temporal de folio
+      .invoiceNumber("FAC-" + System.currentTimeMillis())
       .issueDate(issueDate)
       .customer(customer)
       .items(items)
@@ -87,20 +68,17 @@ public class InvoiceService {
       .netAmount(netAmount)
       .build();
 
-    // 6. Procesar Abono Inicial (Si el cliente pagó algo al momento)
     if (initialPayment != null && initialPayment.getAmount().compareTo(BigDecimal.ZERO) > 0) {
       if (initialPayment.getAmount().compareTo(netAmount) > 0) {
-        throw new IllegalArgumentException("El pago inicial no puede ser mayor al total de la factura");
+        throw new IllegalArgumentException("The initial payment cannot exceed the total invoice amount.");
       }
 
       initialPayment.setPaymentDate(LocalDateTime.now());
-      // Relacionamos el pago con la factura (Si tuvieras setters en dominio)
       invoice.setPayments(List.of(initialPayment));
 
       balanceDue = netAmount.subtract(initialPayment.getAmount());
     }
 
-    // 7. Determinar Estado de la Factura
     invoice.setBalanceDue(balanceDue);
     if (balanceDue.compareTo(BigDecimal.ZERO) == 0) {
       invoice.setStatus(InvoiceStatus.PAID);
@@ -110,13 +88,9 @@ public class InvoiceService {
       invoice.setStatus(InvoiceStatus.PENDING);
     }
 
-    // 8. Guardar y retornar (Hibernate hace la cascada para guardar Items y Payments)
     return invoiceRepository.save(invoice);
   }
 
-  /**
-   * Helper Method: Calcula el valor monetario de un descuento
-   */
   private BigDecimal calculateItemDiscount(BigDecimal grossAmount, BigDecimal discountValue, DiscountType type) {
     if (discountValue == null || discountValue.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
@@ -125,7 +99,6 @@ public class InvoiceService {
     if (type == DiscountType.FIXED_AMOUNT) {
       return discountValue;
     } else if (type == DiscountType.PERCENTAGE) {
-      // Ejemplo: (1000 * 10) / 100 = 100 de descuento
       return grossAmount.multiply(discountValue).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
 
@@ -135,22 +108,21 @@ public class InvoiceService {
   @Transactional
   public Invoice registerPayment(Long invoiceId, PaymentRequest paymentRequest) {
     Invoice invoice = invoiceRepository.findById(invoiceId)
-      .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrada"));
+      .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
 
     if (invoice.getStatus() == InvoiceStatus.PAID) {
-      throw new IllegalArgumentException("Esta factura ya está pagada en su totalidad");
+      throw new IllegalArgumentException("This invoice has already been paid in full.");
     }
 
     if (paymentRequest.amount().compareTo(BigDecimal.ZERO) <= 0) {
-      throw new IllegalArgumentException("El monto del abono debe ser mayor a cero");
+      throw new IllegalArgumentException("The payment amount must be greater than zero.");
     }
 
     if (paymentRequest.amount().compareTo(invoice.getBalanceDue()) > 0) {
-      throw new IllegalArgumentException("El abono (" + paymentRequest.amount() +
-        ") no puede ser mayor al saldo pendiente (" + invoice.getBalanceDue() + ")");
+      throw new IllegalArgumentException("The payment (" + paymentRequest.amount() +
+        ") cannot exceed the outstanding balance (" + invoice.getBalanceDue() + ")");
     }
 
-    // Crear el pago
     Payment payment = Payment.builder()
       .amount(paymentRequest.amount())
       .method(paymentRequest.method())
@@ -158,7 +130,6 @@ public class InvoiceService {
       .paymentDate(LocalDateTime.now())
       .build();
 
-    // Actualizar la factura
     invoice.getPayments().add(payment);
 
     BigDecimal newBalanceDue = invoice.getBalanceDue().subtract(payment.getAmount());
@@ -174,7 +145,6 @@ public class InvoiceService {
   }
 
   public org.springframework.data.domain.Page<Invoice> getAllInvoices(String search, Long customerId, Long productId, org.springframework.data.domain.Pageable pageable) {
-    // Evitamos enviar null a la consulta LIKE de la base de datos
     String finalSearch = (search != null && !search.trim().isEmpty()) ? search : "";
 
     return invoiceRepository.searchInvoices(finalSearch, customerId, productId, pageable);

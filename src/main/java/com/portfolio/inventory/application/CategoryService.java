@@ -16,7 +16,7 @@ public class CategoryService {
 
   public Category createCategory(Category category) {
     if (categoryRepository.existsByName(category.getName())) {
-      throw new IllegalArgumentException("La categoría ya existe");
+      throw new IllegalArgumentException("The category already exists.");
     }
     return categoryRepository.save(category);
   }
@@ -27,7 +27,7 @@ public class CategoryService {
 
   public Category getCategoryById(Long id) {
     return categoryRepository.findById(id)
-      .orElseThrow(() -> new ResourceNotFoundException("La categoría con ID " + id + " no fue encontrada"));
+      .orElseThrow(() -> new ResourceNotFoundException("The category with ID " + id + " was not found"));
   }
 
   public Category updateCategory(Long id, Category categoryUpdate) {

@@ -16,7 +16,7 @@ public class SupplierService {
 
   public Supplier createSupplier(Supplier supplier) {
     if (supplierRepository.existsByName(supplier.getName())) {
-      throw new IllegalArgumentException("El proveedor ya existe en la base de datos");
+      throw new IllegalArgumentException("The supplier already exists in the database.");
     }
     return supplierRepository.save(supplier);
   }
@@ -28,7 +28,7 @@ public class SupplierService {
 
   public Supplier getSupplierById(Long id) {
     return supplierRepository.findById(id)
-      .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con el ID: " + id));
+      .orElseThrow(() -> new ResourceNotFoundException("Provider not found with ID: " + id));
   }
 
   public Supplier updateSupplier(Long id, Supplier supplierUpdate) {

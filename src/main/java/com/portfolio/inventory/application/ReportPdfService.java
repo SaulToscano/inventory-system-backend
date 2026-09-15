@@ -20,12 +20,12 @@ public class ReportPdfService {
   public byte[] generateSellReportPdf(List<SellReportItem> items) {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
-      // Usamos formato Horizontal (LANDSCAPE) porque las tablas de reportes suelen ser anchas
+      // Horizontal format (LANDSCAPE)
       Document document = new Document(PageSize.A4.rotate());
       PdfWriter.getInstance(document, baos);
       document.open();
 
-      // 1. Título y Encabezado
+      // 1. Title and Heading
       Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
       Paragraph title = new Paragraph("REPORTE DETALLADO DE VENTAS", titleFont);
       title.setAlignment(Element.ALIGN_CENTER);
@@ -38,23 +38,23 @@ public class ReportPdfService {
       generatedAt.setSpacingAfter(20);
       document.add(generatedAt);
 
-      // 2. Definir la Tabla (7 columnas)
+      // 2. Define the table
       PdfPTable table = new PdfPTable(7);
       table.setWidthPercentage(100);
-      table.setWidths(new float[]{2f, 2f, 3f, 3f, 1f, 2f, 2f}); // Proporciones
+      table.setWidths(new float[]{2f, 2f, 3f, 3f, 1f, 2f, 2f});
 
-      // 3. Encabezados
+      // 3. Headings
       String[] headers = {"Factura", "Fecha", "Cliente", "Producto", "Cant.", "Precio Unit.", "Subtotal"};
       Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
       for (String header : headers) {
         PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-        cell.setBackgroundColor(new Color(220, 220, 220)); // Gris claro
+        cell.setBackgroundColor(new Color(220, 220, 220));
         cell.setPadding(6);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         table.addCell(cell);
       }
 
-      // 4. Llenar filas y calcular totales
+      // 4. Fill rows and calculate totals
       Font rowFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
       BigDecimal grandTotal = BigDecimal.ZERO;
 
@@ -75,7 +75,7 @@ public class ReportPdfService {
       }
       document.add(table);
 
-      // 5. Total Final
+      // 5. Final Total
       Paragraph totalParagraph = new Paragraph("Gran Total Vendido: $" + grandTotal,
         FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14));
       totalParagraph.setAlignment(Element.ALIGN_RIGHT);
@@ -86,13 +86,13 @@ public class ReportPdfService {
       return baos.toByteArray();
 
     } catch (Exception e) {
-      throw new RuntimeException("Error al generar el PDF del reporte", e);
+      throw new RuntimeException("Error generating the report PDF", e);
     }
   }
 
   public byte[] generateDueReportPdf(List<DueReportItem> items) {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-      Document document = new Document(PageSize.A4); // Vertical está bien aquí
+      Document document = new Document(PageSize.A4);
       PdfWriter.getInstance(document, baos);
       document.open();
 
@@ -135,7 +135,7 @@ public class ReportPdfService {
 
   public byte[] generateStockReportPdf(List<StockReportItem> items) {
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-      Document document = new Document(PageSize.A4.rotate()); // Horizontal
+      Document document = new Document(PageSize.A4.rotate());
       PdfWriter.getInstance(document, baos);
       document.open();
 

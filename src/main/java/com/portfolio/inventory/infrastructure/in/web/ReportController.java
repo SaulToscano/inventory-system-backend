@@ -14,14 +14,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/reports")
 @RequiredArgsConstructor
-@Tag(name = "Reports", description = "Módulo de Reportes y Estadísticas")
+@Tag(name = "Reports", description = "Reports and Statistics Module")
 public class ReportController {
 
   private final ReportService reportService;
   private final ReportPdfService reportPdfService;
 
   @PostMapping("/due")
-  @Operation(summary = "Generar reporte de cuentas por cobrar (Deudores)")
+  @Operation(summary = "Generate accounts receivable report (Debtors)")
   public ResponseEntity<List<DueReportItem>> generateDueReport(@RequestBody ReportFilterRequest filter) {
     return ResponseEntity.ok(reportService.getDueReport(
       filter.customerId(), filter.dateFrom(), filter.dateTo()
@@ -29,7 +29,7 @@ public class ReportController {
   }
 
   @PostMapping(value = "/due/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
-  @Operation(summary = "Descargar reporte de cuentas por cobrar en PDF")
+  @Operation(summary = "Download accounts receivable report in PDF")
   public ResponseEntity<byte[]> downloadDueReportPdf(@RequestBody ReportFilterRequest filter) {
     List<DueReportItem> data = reportService.getDueReport(filter.customerId(), filter.dateFrom(), filter.dateTo());
     return ResponseEntity.ok()
@@ -38,7 +38,7 @@ public class ReportController {
   }
 
   @PostMapping("/sells")
-  @Operation(summary = "Generar reporte detallado de ventas")
+  @Operation(summary = "Generate a detailed sales report")
   public ResponseEntity<List<SellReportItem>> generateSellReport(@RequestBody ReportFilterRequest filter) {
     return ResponseEntity.ok(reportService.getSellReport(
       filter.categoryId(), filter.productId(), filter.customerId(), filter.dateFrom(), filter.dateTo()
@@ -46,25 +46,22 @@ public class ReportController {
   }
 
   @PostMapping(value = "/sells/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
-  @Operation(summary = "Descargar reporte de ventas en formato PDF")
+  @Operation(summary = "Download sales report in PDF format")
   public ResponseEntity<byte[]> generateSellReportPdf(@RequestBody ReportFilterRequest filter) {
 
-    // 1. Obtenemos los datos desde el servicio normal que ya habíamos hecho
     List<SellReportItem> reportData = reportService.getSellReport(
       filter.categoryId(), filter.productId(), filter.customerId(), filter.dateFrom(), filter.dateTo()
     );
 
-    // 2. Mandamos esos datos al dibujante de PDF
     byte[] pdfBytes = reportPdfService.generateSellReportPdf(reportData);
 
-    // 3. Retornamos el archivo para su descarga
     return ResponseEntity.ok()
       .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Reporte_Ventas.pdf")
       .body(pdfBytes);
   }
 
   @PostMapping("/stock")
-  @Operation(summary = "Generar reporte de existencias (Stock) por lotes y proveedores")
+  @Operation(summary = "Generate stock report by batch and supplier")
   public ResponseEntity<List<StockReportItem>> generateStockReport(@RequestBody ReportFilterRequest filter) {
     return ResponseEntity.ok(reportService.getStockReport(
       filter.categoryId(),
@@ -76,7 +73,7 @@ public class ReportController {
   }
 
   @PostMapping(value = "/stock/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
-  @Operation(summary = "Descargar reporte de existencias en PDF")
+  @Operation(summary = "Download inventory report as PDF")
   public ResponseEntity<byte[]> downloadStockReportPdf(@RequestBody ReportFilterRequest filter) {
     List<StockReportItem> data = reportService.getStockReport(filter.categoryId(), filter.productId(), filter.supplierId(), filter.dateFrom(), filter.dateTo());
     return ResponseEntity.ok()
@@ -85,7 +82,7 @@ public class ReportController {
   }
 
   @PostMapping("/profit")
-  @Operation(summary = "Generar reporte de ganancias netas (Profit)")
+  @Operation(summary = "Generate net profit report")
   public ResponseEntity<List<ProfitReportItem>> generateProfitReport(@RequestBody ReportFilterRequest filter) {
     return ResponseEntity.ok(reportService.getProfitReport(
       filter.categoryId(),
@@ -97,7 +94,7 @@ public class ReportController {
   }
 
   @PostMapping(value = "/profit/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
-  @Operation(summary = "Descargar reporte de ganancias en PDF")
+  @Operation(summary = "Download earnings report as PDF")
   public ResponseEntity<byte[]> downloadProfitReportPdf(@RequestBody ReportFilterRequest filter) {
     List<ProfitReportItem> data = reportService.getProfitReport(filter.categoryId(), filter.productId(), filter.customerId(), filter.dateFrom(), filter.dateTo());
     return ResponseEntity.ok()
@@ -106,7 +103,7 @@ public class ReportController {
   }
 
   @PostMapping("/invoices")
-  @Operation(summary = "Generar reporte general de facturas emitidas")
+  @Operation(summary = "Generate a general report of issued invoices.")
   public ResponseEntity<List<InvoiceReportItem>> generateInvoiceReport(@RequestBody ReportFilterRequest filter) {
     return ResponseEntity.ok(reportService.getInvoiceReport(
       filter.customerId(),
@@ -116,7 +113,7 @@ public class ReportController {
   }
 
   @PostMapping(value = "/invoices/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
-  @Operation(summary = "Descargar resumen de facturación en PDF")
+  @Operation(summary = "Download billing summary as PDF")
   public ResponseEntity<byte[]> downloadInvoiceReportPdf(@RequestBody ReportFilterRequest filter) {
     List<InvoiceReportItem> data = reportService.getInvoiceReport(filter.customerId(), filter.dateFrom(), filter.dateTo());
     return ResponseEntity.ok()

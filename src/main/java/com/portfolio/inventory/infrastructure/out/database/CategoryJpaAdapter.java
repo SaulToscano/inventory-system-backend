@@ -51,7 +51,6 @@ public class CategoryJpaAdapter implements CategoryRepository {
     return repository.searchCategories(search, pageable).map(this::toDomain);
   }
 
-  // Método auxiliar para mapear de Entidad a Dominio
   private Category toDomain(CategoryEntity entity) {
     return Category.builder()
       .id(entity.getId())

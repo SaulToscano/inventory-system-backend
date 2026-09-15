@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor
-@Tag(name = "Customers", description = "Gestión de Clientes")
+@Tag(name = "Customers", description = "Customer Management")
 public class CustomerController {
-
   private final CustomerService customerService;
 
   @PostMapping
-  @Operation(summary = "Registrar un nuevo cliente")
+  @Operation(summary = "Register a new client")
   public ResponseEntity<Customer> create(@Valid @RequestBody CustomerRequest request) {
     Customer customer = Customer.builder()
       .name(request.name())
@@ -34,7 +33,7 @@ public class CustomerController {
   }
 
   @GetMapping
-  @Operation(summary = "Obtener catálogo de clientes paginado y filtrado")
+  @Operation(summary = "Retrieve a paginated and filtered list of customers")
   public ResponseEntity<Page<Customer>> getAll(
     @RequestParam(required = false) String search,
     @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
@@ -42,13 +41,13 @@ public class CustomerController {
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Obtener detalles de un cliente específico")
+  @Operation(summary = "Get details for a specific customer")
   public ResponseEntity<Customer> getById(@PathVariable Long id) {
     return ResponseEntity.ok(customerService.getCustomerById(id));
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Actualizar información de un cliente")
+  @Operation(summary = "Update a client's information")
   public ResponseEntity<Customer> update(@PathVariable Long id, @Valid @RequestBody CustomerRequest request) {
     Customer customer = Customer.builder()
       .name(request.name())
@@ -60,7 +59,7 @@ public class CustomerController {
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Eliminar un cliente")
+  @Operation(summary = "Delete a client")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     customerService.deleteCustomer(id);
     return ResponseEntity.noContent().build();

@@ -14,7 +14,5 @@ public class Product {
   private String name;
   private String details;
 
-  // Aquí hacemos el "link" en la capa de negocio.
-  // Un Producto TIENE una Categoría.
   private Category category;
 }
