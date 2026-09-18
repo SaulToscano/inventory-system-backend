@@ -18,7 +18,7 @@ public class CorsConfig {
 
     config.setAllowCredentials(true);
     config.setAllowedOrigins(
-      Arrays.asList("http://localhost:4200", "https://saultoscano.github.io")
+      Arrays.asList("http://localhost:4200", "https://saultoscano.github.io", "https://erp.saul-toscano.fyi")
     );
     config.setAllowedHeaders(
       Arrays.asList(
