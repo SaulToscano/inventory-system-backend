@@ -1,6 +1,7 @@
 name: Deploy Backend to OCI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -34,7 +35,5 @@ jobs:
           key: ${{ secrets.OCI_SSH_KEY }}
           script: |
             cd ~/spring-erp-backend
-            
             sudo docker compose up -d --build
-            
             sudo docker image prune -f

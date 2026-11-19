@@ -1,11 +1,14 @@
-version: '3.8'
-
 services:
   api-erp:
     build: .
     container_name: spring-erp-backend
     restart: unless-stopped
-    ports:
-      - "8080:8080"
     env_file:
       - .env
+    mem_limit: 650m
+    networks:
+      - proxy_net
+
+networks:
+  proxy_net:
+    external: true
